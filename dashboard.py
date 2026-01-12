@@ -6,10 +6,6 @@ from babel.numbers import format_currency
 
 sns.set(style="dark")
 
-# =========================
-# FUNCTION
-# =========================
-
 def create_daily_orders_df(df):
     daily_orders_df = (
         df.resample(rule="D", on="order_date")
@@ -95,11 +91,6 @@ def create_rfm_df(df):
     rfm_df.drop("max_order_timestamp", axis=1, inplace=True)
     return rfm_df
 
-
-# =========================
-# LOAD DATA
-# =========================
-
 all_df = pd.read_csv("all_data.csv")
 
 datetime_columns = ["order_date", "delivery_date"]
@@ -111,10 +102,6 @@ all_df.reset_index(drop=True, inplace=True)
 
 min_date = all_df["order_date"].min()
 max_date = all_df["order_date"].max()
-
-# =========================
-# SIDEBAR
-# =========================
 
 with st.sidebar:
     st.image(
@@ -133,10 +120,6 @@ main_df = all_df[
     (all_df["order_date"] <= pd.to_datetime(end_date))
 ]
 
-# =========================
-# CREATE DF
-# =========================
-
 daily_orders_df = create_daily_orders_df(main_df)
 sum_order_items_df = create_sum_order_items_df(main_df)
 bygender_df = create_bygender_df(main_df)
@@ -144,13 +127,9 @@ byage_df = create_byage_df(main_df)
 bystate_df = create_bystate_df(main_df)
 rfm_df = create_rfm_df(main_df)
 
-# =========================
-# DASHBOARD
-# =========================
 
 st.header("My Collection Dashboard ✨")
 
-# ---- DAILY ORDERS ----
 st.subheader("Daily Orders")
 
 col1, col2 = st.columns(2)
@@ -170,7 +149,6 @@ st.subheader("Best & Worst Performing Product")
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(30, 14))
 
-# PALETTE WARNA PRODUK
 product_palette = {
     "Denim": "#90CAF9",
     "Joggers": "#0066CC",
@@ -184,7 +162,6 @@ product_palette = {
     "Cuban Collar": "#7CFC98"
 }
 
-# ===== BEST PRODUCT =====
 best_df = sum_order_items_df.head(5)
 
 sns.barplot(
@@ -209,7 +186,6 @@ ax[0].legend(
     bbox_to_anchor=(1.02, 0.5)
 )
 
-# ===== WORST PRODUCT =====
 worst_df = sum_order_items_df.sort_values(
     by="quantity_x", ascending=True
 ).head(5)
@@ -239,7 +215,6 @@ ax[1].legend(
 st.pyplot(fig)
 
 
-# ---- CUSTOMER DEMOGRAPHICS ----
 st.subheader("Customer Demographics")
 
 col1, col2 = st.columns(2)
@@ -266,7 +241,6 @@ with col2:
     ax.set_title("Number of Customer by Age")
     st.pyplot(fig)
 
-# ---- CUSTOMER BY STATE (BERWARNA) ----
 fig, ax = plt.subplots(figsize=(20, 10))
 
 state_palette = {
@@ -294,7 +268,7 @@ ax.set_title("Number of Customer by State", fontsize=30, weight="bold")
 ax.legend(title="state", bbox_to_anchor=(1.02, 1), loc="upper left")
 st.pyplot(fig)
 
-# ---- RFM ----
+
 st.subheader("Best Customer Based on RFM Parameters")
 
 col1, col2, col3 = st.columns(3)
